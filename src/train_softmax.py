@@ -197,9 +197,14 @@ def main(args):
 
         with sess.as_default():
 
-            if pretrained_model:
-                print('Restoring pretrained model: %s' % pretrained_model)
-                saver.restore(sess, pretrained_model)
+            # if pretrained_model:
+            #     print('Restoring pretrained model: %s' % pretrained_model)
+            #     saver.restore(sess, pretrained_model)
+            if args.pretrained_model:
+                print('Restoring pretrained model: %s' % args.pretrained_model)
+                ckpt = tf.train.get_checkpoint_state(args.pretrained_model)
+                if ckpt and ckpt.model_checkpont_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
 
             # Training and validation loop
             print('Running training')
@@ -257,7 +262,7 @@ def main(args):
 
                 print('Saving statistics')
                 with h5py.File(stat_file_name, 'w') as f:
-                    for key, value in stat.iteritems():
+                    for key, value in stat.items():
                         f.create_dataset(key, data=value)
     
     return model_dir
