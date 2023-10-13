@@ -1,0 +1,5 @@
+python src/align_dataset_mtcnn.py ^
+D:\repository\sd\datasets\source ^
+D:\repository\sd\datasets\source_align ^
+--image_size 160 ^
+--margin 32
