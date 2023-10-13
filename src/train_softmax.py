@@ -181,7 +181,10 @@ def main(args):
             learning_rate, args.moving_average_decay, tf.global_variables(), args.log_histograms)
         
         # Create a saver
-        saver = tf.train.Saver(tf.trainable_variables(), max_to_keep=3)
+        # saver = tf.train.Saver(tf.trainable_variables(), max_to_keep=3)
+        set_A_vars = [v for v in tf.trainable_variables() if v.name.startswith('InceptionResnetV1')]
+        saver_set_A = tf.train.Saver(set_A_vars, max_to_keep=3)
+        saver_set_A_and_B = tf.train.Saver(tf.trainable_variables(), max_to_keep=3)
 
         # Build the summary operation based on the TF collection of Summaries.
         summary_op = tf.summary.merge_all()
@@ -196,7 +199,8 @@ def main(args):
         tf.train.start_queue_runners(coord=coord, sess=sess)
 
         with sess.as_default():
-
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
             # if pretrained_model:
             #     print('Restoring pretrained model: %s' % pretrained_model)
             #     saver.restore(sess, pretrained_model)
@@ -204,7 +208,7 @@ def main(args):
                 print('Restoring pretrained model: %s' % args.pretrained_model)
                 ckpt = tf.train.get_checkpoint_state(args.pretrained_model)
                 if ckpt and ckpt.model_checkpont_path:
-                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    saver_set_A.restore(sess, ckpt.model_checkpoint_path)
 
             # Training and validation loop
             print('Running training')
@@ -250,7 +254,8 @@ def main(args):
                 stat['time_validate'][epoch-1] = time.time() - t
 
                 # Save variables and the metagraph if it doesn't exist already
-                save_variables_and_metagraph(sess, saver, summary_writer, model_dir, subdir, epoch)
+                # save_variables_and_metagraph(sess, saver, summary_writer, model_dir, subdir, epoch)
+                save_variables_and_metagraph(sess, saver_set_A_and_B, summary_writer, model_dir, subdir, epoch)
 
                 # Evaluate on LFW
                 t = time.time()
