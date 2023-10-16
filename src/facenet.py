@@ -40,6 +40,7 @@ import re
 from tensorflow.python.platform import gfile
 import math
 from six import iteritems
+from PIL import Image
 
 def triplet_loss(anchor, positive, negative, alpha):
     """Calculate the triplet loss according to the FaceNet paper
@@ -52,7 +53,7 @@ def triplet_loss(anchor, positive, negative, alpha):
     Returns:
       the triplet loss according to the FaceNet paper as a float tensor.
     """
-    with tf.variable_scope('triplet_loss'):
+    with tf.compat.v1.variable_scope('triplet_loss'):
         pos_dist = tf.reduce_sum(tf.square(tf.subtract(anchor, positive)), 1)
         neg_dist = tf.reduce_sum(tf.square(tf.subtract(anchor, negative)), 1)
         
@@ -66,12 +67,12 @@ def center_loss(features, label, alfa, nrof_classes):
        (http://ydwen.github.io/papers/WenECCV16.pdf)
     """
     nrof_features = features.get_shape()[1]
-    centers = tf.get_variable('centers', [nrof_classes, nrof_features], dtype=tf.float32,
-        initializer=tf.constant_initializer(0), trainable=False)
+    centers = tf.compat.v1.get_variable('centers', [nrof_classes, nrof_features], dtype=tf.float32,
+        initializer=tf.compat.v1.constant_initializer(0), trainable=False)
     label = tf.reshape(label, [-1])
     centers_batch = tf.gather(centers, label)
     diff = (1 - alfa) * (centers_batch - features)
-    centers = tf.scatter_sub(centers, label, diff)
+    centers = tf.compat.v1.scatter_sub(centers, label, diff)
     with tf.control_dependencies([centers]):
         loss = tf.reduce_mean(tf.square(features - centers_batch))
     return loss, centers
@@ -101,44 +102,43 @@ RANDOM_FLIP = 4
 FIXED_STANDARDIZATION = 8
 FLIP = 16
 def create_input_pipeline(input_queue, image_size, nrof_preprocess_threads, batch_size_placeholder):
-    with tf.name_scope("tempscope"):
-        images_and_labels_list = []
-        for _ in range(nrof_preprocess_threads):
-            filenames, label, control = input_queue.dequeue()
-            images = []
-            for filename in tf.unstack(filenames):
-                file_contents = tf.read_file(filename)
-                image = tf.image.decode_image(file_contents, 3)
-                image = tf.cond(get_control_flag(control[0], RANDOM_ROTATE),
-                                lambda:tf.py_func(random_rotate_image, [image], tf.uint8), 
-                                lambda:tf.identity(image))
-                image = tf.cond(get_control_flag(control[0], RANDOM_CROP), 
-                                lambda:tf.random_crop(image, image_size + (3,)), 
-                                lambda:tf.image.resize_image_with_crop_or_pad(image, image_size[0], image_size[1]))
-                image = tf.cond(get_control_flag(control[0], RANDOM_FLIP),
-                                lambda:tf.image.random_flip_left_right(image),
-                                lambda:tf.identity(image))
-                image = tf.cond(get_control_flag(control[0], FIXED_STANDARDIZATION),
-                                lambda:(tf.cast(image, tf.float32) - 127.5)/128.0,
-                                lambda:tf.cast(tf.image.per_image_standardization(image), tf.float32))
-                image = tf.cond(get_control_flag(control[0], FLIP),
-                                lambda:tf.image.flip_left_right(image),
-                                lambda:tf.identity(image))
-                #pylint: disable=no-member
-                image.set_shape(image_size + (3,))
-                images.append(image)
-            images_and_labels_list.append([images, label])
+    images_and_labels_list = []
+    for _ in range(nrof_preprocess_threads):
+        filenames, label, control = input_queue.dequeue()
+        images = []
+        for filename in tf.unstack(filenames):
+            file_contents = tf.io.read_file(filename)
+            image = tf.image.decode_image(file_contents, 3)
+            image = tf.cond(get_control_flag(control[0], RANDOM_ROTATE),
+                            lambda:tf.compat.v1.py_func(random_rotate_image, [image], tf.uint8), 
+                            lambda:tf.identity(image))
+            image = tf.cond(get_control_flag(control[0], RANDOM_CROP), 
+                            lambda:tf.image.random_crop(image, image_size + (3,)), 
+                            lambda:tf.image.resize_with_crop_or_pad(image, image_size[0], image_size[1]))
+            image = tf.cond(get_control_flag(control[0], RANDOM_FLIP),
+                            lambda:tf.image.random_flip_left_right(image),
+                            lambda:tf.identity(image))
+            image = tf.cond(get_control_flag(control[0], FIXED_STANDARDIZATION),
+                            lambda:(tf.cast(image, tf.float32) - 127.5)/128.0,
+                            lambda:tf.image.per_image_standardization(image))
+            image = tf.cond(get_control_flag(control[0], FLIP),
+                            lambda:tf.image.flip_left_right(image),
+                            lambda:tf.identity(image))
+            #pylint: disable=no-member
+            image.set_shape(image_size + (3,))
+            images.append(image)
+        images_and_labels_list.append([images, label])
 
-        image_batch, label_batch = tf.train.batch_join(
-            images_and_labels_list, batch_size=batch_size_placeholder, 
-            shapes=[image_size + (3,), ()], enqueue_many=True,
-            capacity=4 * nrof_preprocess_threads * 100,
-            allow_smaller_final_batch=True)
+    image_batch, label_batch = tf.compat.v1.train.batch_join(
+        images_and_labels_list, batch_size=batch_size_placeholder, 
+        shapes=[image_size + (3,), ()], enqueue_many=True,
+        capacity=4 * nrof_preprocess_threads * 100,
+        allow_smaller_final_batch=True)
     
-        return image_batch, label_batch
+    return image_batch, label_batch
 
 def get_control_flag(control, field):
-    return tf.equal(tf.mod(tf.floor_div(control, field), 2), 1)
+    return tf.equal(tf.math.floormod(tf.math.floordiv(control, field), 2), 1)
   
 def _add_loss_summaries(total_loss):
     """Add summaries for losses.
@@ -153,7 +153,7 @@ def _add_loss_summaries(total_loss):
     """
     # Compute the moving average of all individual losses and the total loss.
     loss_averages = tf.train.ExponentialMovingAverage(0.9, name='avg')
-    losses = tf.get_collection('losses')
+    losses = tf.compat.v1.get_collection('losses')
     loss_averages_op = loss_averages.apply(losses + [total_loss])
   
     # Attach a scalar summmary to all individual losses and the total loss; do the
@@ -161,8 +161,8 @@ def _add_loss_summaries(total_loss):
     for l in losses + [total_loss]:
         # Name each loss as '(raw)' and name the moving average version of the loss
         # as the original loss name.
-        tf.summary.scalar(l.op.name +' (raw)', l)
-        tf.summary.scalar(l.op.name, loss_averages.average(l))
+        tf.compat.v1.summary.scalar(l.op.name +' (raw)', l)
+        tf.compat.v1.summary.scalar(l.op.name, loss_averages.average(l))
   
     return loss_averages_op
 
@@ -173,15 +173,15 @@ def train(total_loss, global_step, optimizer, learning_rate, moving_average_deca
     # Compute gradients.
     with tf.control_dependencies([loss_averages_op]):
         if optimizer=='ADAGRAD':
-            opt = tf.train.AdagradOptimizer(learning_rate)
+            opt = tf.compat.v1.train.AdagradOptimizer(learning_rate)
         elif optimizer=='ADADELTA':
-            opt = tf.train.AdadeltaOptimizer(learning_rate, rho=0.9, epsilon=1e-6)
+            opt = tf.compat.v1.train.AdadeltaOptimizer(learning_rate, rho=0.9, epsilon=1e-6)
         elif optimizer=='ADAM':
-            opt = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999, epsilon=0.1)
+            opt = tf.compat.v1.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999, epsilon=0.1)
         elif optimizer=='RMSPROP':
-            opt = tf.train.RMSPropOptimizer(learning_rate, decay=0.9, momentum=0.9, epsilon=1.0)
+            opt = tf.compat.v1.train.RMSPropOptimizer(learning_rate, decay=0.9, momentum=0.9, epsilon=1.0)
         elif optimizer=='MOM':
-            opt = tf.train.MomentumOptimizer(learning_rate, 0.9, use_nesterov=True)
+            opt = tf.compat.v1.train.MomentumOptimizer(learning_rate, 0.9, use_nesterov=True)
         else:
             raise ValueError('Invalid optimization algorithm')
     
@@ -192,19 +192,19 @@ def train(total_loss, global_step, optimizer, learning_rate, moving_average_deca
   
     # Add histograms for trainable variables.
     if log_histograms:
-        for var in tf.trainable_variables():
-            tf.summary.histogram(var.op.name, var)
+        for var in tf.compat.v1.trainable_variables():
+            tf.compat.v1.summary.histogram(var.op.name, var)
    
     # Add histograms for gradients.
     if log_histograms:
         for grad, var in grads:
             if grad is not None:
-                tf.summary.histogram(var.op.name + '/gradients', grad)
+                tf.compat.v1.summary.histogram(var.op.name + '/gradients', grad)
   
     # Track the moving averages of all trainable variables.
     variable_averages = tf.train.ExponentialMovingAverage(
         moving_average_decay, global_step)
-    variables_averages_op = variable_averages.apply(tf.trainable_variables())
+    variables_averages_op = variable_averages.apply(tf.compat.v1.trainable_variables())
   
     with tf.control_dependencies([apply_gradient_op, variables_averages_op]):
         train_op = tf.no_op(name='train')
@@ -245,7 +245,7 @@ def load_data(image_paths, do_random_crop, do_random_flip, image_size, do_prewhi
     nrof_samples = len(image_paths)
     images = np.zeros((nrof_samples, image_size, image_size, 3))
     for i in range(nrof_samples):
-        img = misc.imread(image_paths[i])
+        img = np.array(Image.open(image_paths[i]))
         if img.ndim == 2:
             img = to_rgb(img)
         if do_prewhiten:
@@ -369,7 +369,7 @@ def load_model(model, input_map=None):
     if (os.path.isfile(model_exp)):
         print('Model filename: %s' % model_exp)
         with gfile.FastGFile(model_exp,'rb') as f:
-            graph_def = tf.GraphDef()
+            graph_def = tf.compat.v1.GraphDef()
             graph_def.ParseFromString(f.read())
             tf.import_graph_def(graph_def, input_map=input_map, name='')
     else:
@@ -379,8 +379,8 @@ def load_model(model, input_map=None):
         print('Metagraph file: %s' % meta_file)
         print('Checkpoint file: %s' % ckpt_file)
       
-        saver = tf.train.import_meta_graph(os.path.join(model_exp, meta_file), input_map=input_map)
-        saver.restore(tf.get_default_session(), os.path.join(model_exp, ckpt_file))
+        saver = tf.compat.v1.train.import_meta_graph(os.path.join(model_exp, meta_file), input_map=input_map)
+        saver.restore(tf.compat.v1.get_default_session(), os.path.join(model_exp, ckpt_file))
     
 def get_model_filenames(model_dir):
     files = os.listdir(model_dir)
