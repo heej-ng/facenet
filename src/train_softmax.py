@@ -43,6 +43,7 @@ from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.keras import layers, regularizers, initializers
+import tf_slim as slim
 
 def main(args):
   
@@ -143,11 +144,10 @@ def main(args):
         prelogits, _ = network.inference(image_batch, args.keep_probability, 
             phase_train=phase_train_placeholder, bottleneck_layer_size=args.embedding_size, 
             weight_decay=args.weight_decay)
-        logits = layers.Dense(len(train_set), 
-                activation=None,  # 활성화 함수 없음
-                kernel_initializer=initializers.glorot_normal(),  # Xavier 초기화
-                kernel_regularizer=regularizers.l2(args.weight_decay),
-                name='Logits')(prelogits)
+        logits = slim.fully_connected(prelogits, len(train_set), activation_fn=None, 
+                weights_initializer=slim.initializers.xavier_initializer(), 
+                weights_regularizer=slim.l2_regularizer(args.weight_decay),
+                scope='Logits', reuse=False)
 
         embeddings = tf.nn.l2_normalize(prelogits, 1, 1e-10, name='embeddings')
 

@@ -142,7 +142,7 @@ def inference(images, keep_probability, phase_train=True,
     
     with slim.arg_scope([slim.conv2d, slim.fully_connected],
                         weights_initializer=slim.initializers.xavier_initializer(), 
-                        weights_regularizer=tf.keras.regularizers.l2(weight_decay),
+                        weights_regularizer=slim.l2_regularizer(weight_decay),
                         normalizer_fn=slim.batch_norm,
                         normalizer_params=batch_norm_params):
         return inception_resnet_v1(images, is_training=phase_train,
