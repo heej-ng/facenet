@@ -1,3 +1,4 @@
+# window ver.
 python src/train_softmax.py ^
 --logs_base_dir D:\repository\sd\logs/facenet/ ^
 --models_base_dir D:\repository\sd\models/20180402-114759 ^
@@ -25,4 +26,34 @@ python src/train_softmax.py ^
 --lfw_pairs data/pairs.txt ^
 --validation_set_split_ratio 0.05 ^
 --validate_every_n_epochs 5 ^
+--prelogits_norm_loss_factor 5e-4
+
+# mac ver.
+python src/train_softmax.py \
+--logs_base_dir /Users/dave/Desktop/facenet-sd/logs/facenet \
+--models_base_dir /Users/dave/Desktop/facenet-sd/models/20180402-114759 \
+--pretrained_model /Users/dave/Desktop/facenet-sd/models/20180402-114759/model-20180402-114759.ckpt-275 \
+--data_dir /Users/dave/Desktop/facenet-sd/datasets/align_224 \
+--gpu_memory_fraction 0.9 \
+--image_size 224 \
+--batch_size 100 \
+--epoch_size 1000 \
+--model_def models.inception_resnet_v1 \
+--lfw_dir /Users/dave/Desktop/facenet-sd/lfw/lfw-deepfunneled \
+--optimizer ADAM \
+--learning_rate -1 \
+--max_nrof_epochs 10 \
+--keep_probability 0.8 \
+--random_crop \
+--random_flip \
+--use_fixed_image_standardization \
+--learning_rate_schedule_file data/learning_rate_schedule_classifier_vggface2.txt \
+--weight_decay 5e-4 \
+--embedding_size 512 \
+--lfw_distance_metric 1 \
+--lfw_use_flipped_images \
+--lfw_subtract_mean \
+--lfw_pairs data/pairs.txt \
+--validation_set_split_ratio 0.05 \
+--validate_every_n_epochs 5 \
 --prelogits_norm_loss_factor 5e-4
