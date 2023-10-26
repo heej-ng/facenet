@@ -43,6 +43,7 @@ from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.keras import layers, regularizers, initializers
+from tensorflow.keras.callbacks import ReduceLROnPlateau
 import tf_slim as slim
 
 def main(args):
@@ -232,6 +233,9 @@ def main(args):
                 step = sess.run(global_step, feed_dict=None)
                 # Train for one epoch
                 t = time.time()
+                # control learning_rate param of my train function by ReduceLROnPlateau
+                # rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='', min_delta=0.0001, cooldown=0, min_lr=0)
+                
                 cont = train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_op, image_paths_placeholder, labels_placeholder,
                     learning_rate_placeholder, phase_train_placeholder, batch_size_placeholder, control_placeholder, global_step, 
                     total_loss, train_op, summary_op, summary_writer, regularization_losses, args.learning_rate_schedule_file,
@@ -329,7 +333,11 @@ def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_o
     train_time = 0
     while batch_number < args.epoch_size:
         start_time = time.time()
-        feed_dict = {learning_rate_placeholder: lr, phase_train_placeholder:True, batch_size_placeholder:args.batch_size}
+        feed_dict = {}
+        if epoch < 2:
+            feed_dict = {learning_rate_placeholder: lr, phase_train_placeholder:True, batch_size_placeholder:args.batch_size}
+        else:
+            feed_dict = {phase_train_placeholder:True, batch_size_placeholder:args.batch_size}        
         tensor_list = [loss, train_op, step, reg_losses, prelogits, cross_entropy_mean, learning_rate, prelogits_norm, accuracy, prelogits_center_loss]
         if batch_number % 100 == 0:
             loss_, _, step_, reg_losses_, prelogits_, cross_entropy_mean_, lr_, prelogits_norm_, accuracy_, center_loss_, summary_str = sess.run(tensor_list + [summary_op], feed_dict=feed_dict)
@@ -395,6 +403,9 @@ def validate(args, sess, epoch, image_list, label_list, enqueue_op, image_paths_
     stat['val_loss'][val_index] = np.mean(loss_array)
     stat['val_xent_loss'][val_index] = np.mean(xent_array)
     stat['val_accuracy'][val_index] = np.mean(accuracy_array)
+
+    lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1, mode='min', cooldown=0, min_lr=0.00001)
+    lr_scheduler.on_epoch_end(epoch, logs={'val_loss': np.mean(loss_array)})
 
     print('Validation Epoch: %d\tTime %.3f\tLoss %2.3f\tXent %2.3f\tAccuracy %2.3f' %
           (epoch, duration, np.mean(loss_array), np.mean(xent_array), np.mean(accuracy_array)))
