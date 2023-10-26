@@ -43,7 +43,6 @@ from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.keras import layers, regularizers, initializers
-from tensorflow.keras.callbacks import ReduceLROnPlateau
 import tf_slim as slim
 
 def main(args):
@@ -229,18 +228,24 @@ def main(args):
                 'time_evaluate': np.zeros((args.max_nrof_epochs,), np.float32),
                 'prelogits_hist': np.zeros((args.max_nrof_epochs, 1000), np.float32),
               }
+            loss_history = []
             for epoch in range(1,args.max_nrof_epochs+1):
                 step = sess.run(global_step, feed_dict=None)
                 # Train for one epoch
                 t = time.time()
                 # control learning_rate param of my train function by ReduceLROnPlateau
                 # rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='', min_delta=0.0001, cooldown=0, min_lr=0)
-                
+                factor=0.5
+                patience=5
+                min_delta=0.0001
+                min_lr=0.00001
+                processed_learning_rate = customReduceLR(args.learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr)
+
                 cont = train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_op, image_paths_placeholder, labels_placeholder,
                     learning_rate_placeholder, phase_train_placeholder, batch_size_placeholder, control_placeholder, global_step, 
                     total_loss, train_op, summary_op, summary_writer, regularization_losses, args.learning_rate_schedule_file,
                     stat, cross_entropy_mean, accuracy, learning_rate,
-                    prelogits, prelogits_center_loss, args.random_rotate, args.random_crop, args.random_flip, prelogits_norm, args.prelogits_hist_max, args.use_fixed_image_standardization)
+                    prelogits, prelogits_center_loss, args.random_rotate, args.random_crop, args.random_flip, prelogits_norm, args.prelogits_hist_max, args.use_fixed_image_standardization, processed_learning_rate)
                 stat['time_train'][epoch-1] = time.time() - t
                 
                 if not cont:
@@ -250,7 +255,7 @@ def main(args):
                 if len(val_image_list)>0 and ((epoch-1) % args.validate_every_n_epochs == args.validate_every_n_epochs-1 or epoch==args.max_nrof_epochs):
                     validate(args, sess, epoch, val_image_list, val_label_list, enqueue_op, image_paths_placeholder, labels_placeholder, control_placeholder,
                         phase_train_placeholder, batch_size_placeholder, 
-                        stat, total_loss, regularization_losses, cross_entropy_mean, accuracy, args.validate_every_n_epochs, args.use_fixed_image_standardization)
+                        stat, total_loss, regularization_losses, cross_entropy_mean, accuracy, args.validate_every_n_epochs, args.use_fixed_image_standardization, loss_history)
                 stat['time_validate'][epoch-1] = time.time() - t
 
                 # Save variables and the metagraph if it doesn't exist already
@@ -302,16 +307,30 @@ def filter_dataset(dataset, data_filename, percentile, min_nrof_images_per_class
             del(filtered_dataset[i])
 
     return filtered_dataset
-  
+
+def customReduceLR(learning_rate, loss_history, index, factor, patience, min_delta, min_lr):
+    if (index < patience) or (learning_rate < min_lr):
+        return learning_rate
+    for i in range(0, patience):
+        if loss_history[index-i-1] - loss_history[index-i] > min_delta:
+            return learning_rate
+    processed_learning_rate = learning_rate * factor
+    if (processed_learning_rate < min_lr):
+        print(f'>>> under min_lr / min_lr: {min_lr}, current: {processed_learning_rate}')
+        return -1
+    else:
+        print(f'>>> Activate customReduceLR: {learning_rate} -> {processed_learning_rate}')
+        return processed_learning_rate
+
 def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_op, image_paths_placeholder, labels_placeholder, 
       learning_rate_placeholder, phase_train_placeholder, batch_size_placeholder, control_placeholder, step, 
       loss, train_op, summary_op, summary_writer, reg_losses, learning_rate_schedule_file, 
       stat, cross_entropy_mean, accuracy, 
-      learning_rate, prelogits, prelogits_center_loss, random_rotate, random_crop, random_flip, prelogits_norm, prelogits_hist_max, use_fixed_image_standardization):
+      learning_rate, prelogits, prelogits_center_loss, random_rotate, random_crop, random_flip, prelogits_norm, prelogits_hist_max, use_fixed_image_standardization, processed_learning_rate):
     batch_number = 0
-    
-    if args.learning_rate>0.0:
-        lr = args.learning_rate
+
+    if processed_learning_rate>0.0:
+        lr = processed_learning_rate
     else:
         lr = facenet.get_learning_rate_from_file(learning_rate_schedule_file, epoch)
         
@@ -333,11 +352,7 @@ def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_o
     train_time = 0
     while batch_number < args.epoch_size:
         start_time = time.time()
-        feed_dict = {}
-        if epoch < 2:
-            feed_dict = {learning_rate_placeholder: lr, phase_train_placeholder:True, batch_size_placeholder:args.batch_size}
-        else:
-            feed_dict = {phase_train_placeholder:True, batch_size_placeholder:args.batch_size}        
+        feed_dict = {learning_rate_placeholder: lr, phase_train_placeholder:True, batch_size_placeholder:args.batch_size}
         tensor_list = [loss, train_op, step, reg_losses, prelogits, cross_entropy_mean, learning_rate, prelogits_norm, accuracy, prelogits_center_loss]
         if batch_number % 100 == 0:
             loss_, _, step_, reg_losses_, prelogits_, cross_entropy_mean_, lr_, prelogits_norm_, accuracy_, center_loss_, summary_str = sess.run(tensor_list + [summary_op], feed_dict=feed_dict)
@@ -369,7 +384,7 @@ def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_o
 
 def validate(args, sess, epoch, image_list, label_list, enqueue_op, image_paths_placeholder, labels_placeholder, control_placeholder,
              phase_train_placeholder, batch_size_placeholder, 
-             stat, loss, regularization_losses, cross_entropy_mean, accuracy, validate_every_n_epochs, use_fixed_image_standardization):
+             stat, loss, regularization_losses, cross_entropy_mean, accuracy, validate_every_n_epochs, use_fixed_image_standardization, loss_history):
   
     print('Running forward pass on validation set')
 
@@ -404,8 +419,7 @@ def validate(args, sess, epoch, image_list, label_list, enqueue_op, image_paths_
     stat['val_xent_loss'][val_index] = np.mean(xent_array)
     stat['val_accuracy'][val_index] = np.mean(accuracy_array)
 
-    lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1, mode='min', cooldown=0, min_lr=0.00001)
-    lr_scheduler.on_epoch_end(epoch, logs={'val_loss': np.mean(loss_array)})
+    loss_history.append(np.mean(loss_array))
 
     print('Validation Epoch: %d\tTime %.3f\tLoss %2.3f\tXent %2.3f\tAccuracy %2.3f' %
           (epoch, duration, np.mean(loss_array), np.mean(xent_array), np.mean(accuracy_array)))
@@ -432,7 +446,7 @@ def evaluate(sess, enqueue_op, image_paths_placeholder, labels_placeholder, phas
     sess.run(enqueue_op, {image_paths_placeholder: image_paths_array, labels_placeholder: labels_array, control_placeholder: control_array})
     
     embedding_size = int(embeddings.get_shape()[1])
-    assert nrof_images % batch_size == 0, f'The number of LFW images must be an integer multiple of the LFW batch size >> {nrof_images}'
+    assert nrof_images % batch_size == 0, f'The number of LFW images must be an integer multiple of the LFW batch size, images size: {nrof_images}'
     nrof_batches = nrof_images // batch_size
     emb_array = np.zeros((nrof_images, embedding_size))
     lab_array = np.zeros((nrof_images,))

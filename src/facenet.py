@@ -500,7 +500,7 @@ def calculate_val(thresholds, embeddings1, embeddings2, actual_issame, far_targe
     
         val[fold_idx], far[fold_idx] = calculate_val_far(threshold, dist[test_set], actual_issame[test_set])
         # threshold, distance logging, to be removed
-        print('threshold: %3.4f, distance: %3.4f,  val: %3.4f  far: %3.4f' % (threshold, dist[test_set], val[fold_idx], far[fold_idx]))
+        print(f'[validation] threshold: {threshold:.4f}, distance: {np.mean(dist[test_set]):.4f},  val: {val[fold_idx]:.4f}  far: {far[fold_idx]:.4f}')
   
     val_mean = np.mean(val)
     far_mean = np.mean(far)
