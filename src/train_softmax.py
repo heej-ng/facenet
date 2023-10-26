@@ -236,7 +236,7 @@ def main(args):
                 # control learning_rate param of my train function by ReduceLROnPlateau
                 # rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='', min_delta=0.0001, cooldown=0, min_lr=0)
                 factor=0.5
-                patience=5
+                patience=10
                 min_delta=0.0001
                 min_lr=0.00001
                 processed_learning_rate = customReduceLR(args.learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr)
