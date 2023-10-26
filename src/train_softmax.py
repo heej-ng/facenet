@@ -183,8 +183,8 @@ def main(args):
         
         # Create a saver
         set_A_vars = [v for v in tf.compat.v1.trainable_variables() if v.name.startswith('InceptionResnetV1')]
-        saver_set_A = tf.compat.v1.train.Saver(set_A_vars, max_to_keep=3)
-        saver_set_A_and_B = tf.compat.v1.train.Saver(tf.compat.v1.trainable_variables(), max_to_keep=3)
+        saver_set_A = tf.compat.v1.train.Saver(set_A_vars, max_to_keep=100)
+        saver_set_A_and_B = tf.compat.v1.train.Saver(tf.compat.v1.trainable_variables(), max_to_keep=100)
 
         # Build the summary operation based on the TF collection of Summaries.
         summary_op = tf.compat.v1.summary.merge_all()
@@ -446,7 +446,7 @@ def evaluate(sess, enqueue_op, image_paths_placeholder, labels_placeholder, phas
     sess.run(enqueue_op, {image_paths_placeholder: image_paths_array, labels_placeholder: labels_array, control_placeholder: control_array})
     
     embedding_size = int(embeddings.get_shape()[1])
-    assert nrof_images % batch_size == 0, f'The number of LFW images must be an integer multiple of the LFW batch size, images size: {nrof_images}'
+    assert nrof_images % batch_size == 0, f'The number of LFW images must be an integer multiple of the LFW batch size >> {nrof_images}'
     nrof_batches = nrof_images // batch_size
     emb_array = np.zeros((nrof_images, embedding_size))
     lab_array = np.zeros((nrof_images,))
