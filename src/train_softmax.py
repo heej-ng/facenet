@@ -271,7 +271,7 @@ def main(args):
                 
                 # control learning rate hyperparameter
                 factor=0.5
-                patience=10
+                patience=5
                 min_delta=0.0001
                 min_lr=0.00001
                 processed_learning_rate = customReduceLR(args.learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr)
