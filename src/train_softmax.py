@@ -229,17 +229,11 @@ def main(args):
                 'prelogits_hist': np.zeros((args.max_nrof_epochs, 1000), np.float32),
               }
             loss_history = []
+            processed_learning_rate = args.learning_rate
             for epoch in range(1,args.max_nrof_epochs+1):
                 step = sess.run(global_step, feed_dict=None)
                 # Train for one epoch
                 t = time.time()
-                # control learning_rate param of my train function by ReduceLROnPlateau
-                # rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='', min_delta=0.0001, cooldown=0, min_lr=0)
-                factor=0.5
-                patience=10
-                min_delta=0.0001
-                min_lr=0.00001
-                processed_learning_rate = customReduceLR(args.learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr)
 
                 cont = train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_op, image_paths_placeholder, labels_placeholder,
                     learning_rate_placeholder, phase_train_placeholder, batch_size_placeholder, control_placeholder, global_step, 
@@ -274,6 +268,13 @@ def main(args):
                 with h5py.File(stat_file_name, 'w') as f:
                     for key, value in stat.items():
                         f.create_dataset(key, data=value)
+                
+                # control learning rate hyperparameter
+                factor=0.5
+                patience=10
+                min_delta=0.0001
+                min_lr=0.00001
+                processed_learning_rate = customReduceLR(args.learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr)
     
     return model_dir
   
@@ -308,18 +309,19 @@ def filter_dataset(dataset, data_filename, percentile, min_nrof_images_per_class
 
     return filtered_dataset
 
-def customReduceLR(learning_rate, loss_history, index, factor, patience, min_delta, min_lr):
-    if (index < patience) or (learning_rate < min_lr):
+def customReduceLR(learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr):
+    if (epoch < patience) or (learning_rate < min_lr):
         return learning_rate
+    print(f'>>> [ReduceLR] Epoch: {epoch}, {len(loss_history)}')
     for i in range(0, patience):
-        if loss_history[index-i-1] - loss_history[index-i] > min_delta:
+        if loss_history[len(loss_history)-2-i] - loss_history[len(loss_history)-1-i] > min_delta:
             return learning_rate
     processed_learning_rate = learning_rate * factor
     if (processed_learning_rate < min_lr):
-        print(f'>>> under min_lr / min_lr: {min_lr}, current: {processed_learning_rate}')
+        print(f'>>> [ReduceLR] Epoch: {epoch}, under min_lr / min_lr: {min_lr}, current: {processed_learning_rate}')
         return -1
     else:
-        print(f'>>> Activate customReduceLR: {learning_rate} -> {processed_learning_rate}')
+        print(f'>>> [ReduceLR] Epoch: {epoch}, learnig rate: {learning_rate} -> {processed_learning_rate}')
         return processed_learning_rate
 
 def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_op, image_paths_placeholder, labels_placeholder, 
