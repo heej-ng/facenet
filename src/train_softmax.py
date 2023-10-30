@@ -328,6 +328,7 @@ def custom_reduce_lr(learning_rate, current_loss, epoch, factor, patience, min_d
                 return -1, best_loss, wait
             else:
                 print(f'>>> [ReduceLR] Epoch: {epoch}, learnig rate: {learning_rate} -> {processed_learning_rate}')
+                print(f'>>> best loss: {best_loss}, current loss: {current_loss}')
                 return processed_learning_rate, best_loss, wait
         else:
             return learning_rate, best_loss, wait
