@@ -183,8 +183,8 @@ def main(args):
         
         # Create a saver
         set_A_vars = [v for v in tf.compat.v1.trainable_variables() if v.name.startswith('InceptionResnetV1')]
-        saver_set_A = tf.compat.v1.train.Saver(set_A_vars, max_to_keep=100)
-        saver_set_A_and_B = tf.compat.v1.train.Saver(tf.compat.v1.trainable_variables(), max_to_keep=100)
+        saver_set_A = tf.compat.v1.train.Saver(set_A_vars, max_to_keep=150)
+        saver_set_A_and_B = tf.compat.v1.train.Saver(tf.compat.v1.trainable_variables(), max_to_keep=150)
 
         # Build the summary operation based on the TF collection of Summaries.
         summary_op = tf.compat.v1.summary.merge_all()
