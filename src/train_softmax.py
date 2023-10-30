@@ -229,7 +229,7 @@ def main(args):
                 'prelogits_hist': np.zeros((args.max_nrof_epochs, 1000), np.float32),
               }
             processed_learning_rate = args.learning_rate
-            best_loss = 0.0
+            best_loss = 99.99
             wait = 0
             for epoch in range(1,args.max_nrof_epochs+1):
                 step = sess.run(global_step, feed_dict=None)
@@ -275,7 +275,8 @@ def main(args):
                 patience=5
                 min_delta=0.0
                 min_lr=0.00001
-                processed_learning_rate, best_loss, wait = custom_reduce_lr(args.learning_rate, validation_loss, epoch, factor, patience, min_delta, min_lr, best_loss, wait)
+                processed_learning_rate, best_loss, wait = custom_reduce_lr(processed_learning_rate, validation_loss, epoch, factor, patience, min_delta, min_lr, best_loss, wait)
+                print(f'learning rate: {processed_learning_rate}, best loss: {best_loss}, wait: {wait}')
     
     return model_dir
   
@@ -320,6 +321,7 @@ def custom_reduce_lr(learning_rate, current_loss, epoch, factor, patience, min_d
         return learning_rate, best_loss, wait
     else:
         wait += 1
+        print(f'>>> [ReduceLR] wait increase: {wait}')
         if wait >= patience:
             processed_learning_rate = learning_rate * factor
             wait = 0
