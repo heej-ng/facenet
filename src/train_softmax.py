@@ -228,8 +228,9 @@ def main(args):
                 'time_evaluate': np.zeros((args.max_nrof_epochs,), np.float32),
                 'prelogits_hist': np.zeros((args.max_nrof_epochs, 1000), np.float32),
               }
-            loss_history = []
             processed_learning_rate = args.learning_rate
+            best_loss = 0.0
+            wait = 0
             for epoch in range(1,args.max_nrof_epochs+1):
                 step = sess.run(global_step, feed_dict=None)
                 # Train for one epoch
@@ -247,9 +248,9 @@ def main(args):
                   
                 t = time.time()
                 if len(val_image_list)>0 and ((epoch-1) % args.validate_every_n_epochs == args.validate_every_n_epochs-1 or epoch==args.max_nrof_epochs):
-                    validate(args, sess, epoch, val_image_list, val_label_list, enqueue_op, image_paths_placeholder, labels_placeholder, control_placeholder,
+                    validation_loss = validate(args, sess, epoch, val_image_list, val_label_list, enqueue_op, image_paths_placeholder, labels_placeholder, control_placeholder,
                         phase_train_placeholder, batch_size_placeholder, 
-                        stat, total_loss, regularization_losses, cross_entropy_mean, accuracy, args.validate_every_n_epochs, args.use_fixed_image_standardization, loss_history)
+                        stat, total_loss, regularization_losses, cross_entropy_mean, accuracy, args.validate_every_n_epochs, args.use_fixed_image_standardization)
                 stat['time_validate'][epoch-1] = time.time() - t
 
                 # Save variables and the metagraph if it doesn't exist already
@@ -272,9 +273,9 @@ def main(args):
                 # control learning rate hyperparameter
                 factor=0.5
                 patience=5
-                min_delta=0.0001
+                min_delta=0.0
                 min_lr=0.00001
-                processed_learning_rate = customReduceLR(args.learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr)
+                processed_learning_rate, best_loss, wait = custom_reduce_lr(args.learning_rate, validation_loss, epoch, factor, patience, min_delta, min_lr, best_loss, wait)
     
     return model_dir
   
@@ -309,20 +310,27 @@ def filter_dataset(dataset, data_filename, percentile, min_nrof_images_per_class
 
     return filtered_dataset
 
-def customReduceLR(learning_rate, loss_history, epoch, factor, patience, min_delta, min_lr):
-    if (epoch < patience) or (learning_rate < min_lr):
-        return learning_rate
-    print(f'>>> [ReduceLR] Epoch: {epoch}, {len(loss_history)}')
-    for i in range(0, patience):
-        if loss_history[len(loss_history)-2-i] - loss_history[len(loss_history)-1-i] > min_delta:
-            return learning_rate
-    processed_learning_rate = learning_rate * factor
-    if (processed_learning_rate < min_lr):
-        print(f'>>> [ReduceLR] Epoch: {epoch}, under min_lr / min_lr: {min_lr}, current: {processed_learning_rate}')
-        return -1
+def custom_reduce_lr(learning_rate, current_loss, epoch, factor, patience, min_delta, min_lr, best_loss, wait):
+    print(f'>>> [ReduceLR] Epoch: {epoch}')
+    if (epoch < 1) or (learning_rate < min_lr):
+        return learning_rate, best_loss, wait
+    if (best_loss - current_loss > min_delta):
+        best_loss = current_loss
+        wait = 0
+        return learning_rate, best_loss, wait
     else:
-        print(f'>>> [ReduceLR] Epoch: {epoch}, learnig rate: {learning_rate} -> {processed_learning_rate}')
-        return processed_learning_rate
+        wait += 1
+        if wait >= patience:
+            processed_learning_rate = learning_rate * factor
+            wait = 0
+            if (processed_learning_rate < min_lr):
+                print(f'>>> [ReduceLR] Epoch: {epoch}, under min_lr / min_lr: {min_lr}, current: {processed_learning_rate}')
+                return -1, best_loss, wait
+            else:
+                print(f'>>> [ReduceLR] Epoch: {epoch}, learnig rate: {learning_rate} -> {processed_learning_rate}')
+                return processed_learning_rate, best_loss, wait
+        else:
+            return learning_rate, best_loss, wait
 
 def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_op, image_paths_placeholder, labels_placeholder, 
       learning_rate_placeholder, phase_train_placeholder, batch_size_placeholder, control_placeholder, step, 
@@ -386,7 +394,7 @@ def train(args, sess, epoch, image_list, label_list, index_dequeue_op, enqueue_o
 
 def validate(args, sess, epoch, image_list, label_list, enqueue_op, image_paths_placeholder, labels_placeholder, control_placeholder,
              phase_train_placeholder, batch_size_placeholder, 
-             stat, loss, regularization_losses, cross_entropy_mean, accuracy, validate_every_n_epochs, use_fixed_image_standardization, loss_history):
+             stat, loss, regularization_losses, cross_entropy_mean, accuracy, validate_every_n_epochs, use_fixed_image_standardization):
   
     print('Running forward pass on validation set')
 
@@ -421,10 +429,9 @@ def validate(args, sess, epoch, image_list, label_list, enqueue_op, image_paths_
     stat['val_xent_loss'][val_index] = np.mean(xent_array)
     stat['val_accuracy'][val_index] = np.mean(accuracy_array)
 
-    loss_history.append(np.mean(loss_array))
-
     print('Validation Epoch: %d\tTime %.3f\tLoss %2.3f\tXent %2.3f\tAccuracy %2.3f' %
           (epoch, duration, np.mean(loss_array), np.mean(xent_array), np.mean(accuracy_array)))
+    return np.mean(loss_array)
 
 
 def evaluate(sess, enqueue_op, image_paths_placeholder, labels_placeholder, phase_train_placeholder, batch_size_placeholder, control_placeholder, 
