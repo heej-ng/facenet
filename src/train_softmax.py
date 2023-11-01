@@ -231,6 +231,7 @@ def main(args):
             processed_learning_rate = args.learning_rate
             best_loss = 99.99
             wait = 0
+            print(f'lr_factor: {args.lr_factor}, lr_patience: {args.lr_patience}, lr_min_delta: {args.lr_min_delta}, lr_min_lr: {args.lr_min_lr}')
             for epoch in range(1,args.max_nrof_epochs+1):
                 step = sess.run(global_step, feed_dict=None)
                 # Train for one epoch
@@ -271,10 +272,10 @@ def main(args):
                         f.create_dataset(key, data=value)
                 
                 # control learning rate hyperparameter
-                factor=0.5
-                patience=5
-                min_delta=0.0
-                min_lr=0.00001
+                factor=args.lr_factor
+                patience=args.lr_patience
+                min_delta=args.lr_min_delta
+                min_lr=args.lr_min_lr
                 processed_learning_rate, best_loss, wait = custom_reduce_lr(processed_learning_rate, validation_loss, epoch, factor, patience, min_delta, min_lr, best_loss, wait)
                 print(f'learning rate: {processed_learning_rate}, best loss: {best_loss}, wait: {wait}')
     
@@ -616,6 +617,16 @@ def parse_arguments(argv):
         help='Concatenates embeddings for the image and its horizontally flipped counterpart.', action='store_true')
     parser.add_argument('--lfw_subtract_mean', 
         help='Subtract feature mean before calculating distance.', action='store_true')
+        
+    # control learning rate
+    parser.add_argument('--lr_patience', type=int,
+        help='Number of epochs to wait before reducing learning rate.', default=5)
+    parser.add_argument('--lr_factor', type=float,
+        help='Factor to reduce learning rate.', default=0.5)
+    parser.add_argument('--lr_min_delta', type=float,
+        help='Minimum delta to indicate improvement.', default=0.0)
+    parser.add_argument('--lr_min_lr', type=float,
+        help='Minimum learning rate.', default=0.00001)
     return parser.parse_args(argv)
   
 
