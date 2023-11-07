@@ -251,6 +251,8 @@ def train(args, sess, dataset, epoch, image_paths_placeholder, labels_placeholde
         loss_array = np.zeros((nrof_triplets,))
         summary = tf.compat.v1.Summary()
         step = 0
+        print(f'>>> nrof_batches: {nrof_batches}')
+
         while i < nrof_batches:
             start_time = time.time()
             batch_size = min(nrof_examples-i*args.batch_size, args.batch_size)
@@ -265,7 +267,8 @@ def train(args, sess, dataset, epoch, image_paths_placeholder, labels_placeholde
             i += 1
             train_time += duration
             summary.value.add(tag='loss', simple_value=err)
-            
+
+        print(f'Loss: {np.mean(loss_array)}')
         # Add validation loss and accuracy to summary
         #pylint: disable=maybe-no-member
         summary.value.add(tag='time/selection', simple_value=selection_time)
