@@ -505,10 +505,10 @@ model_weights_names_dic = {
 # xx = "20231022-221014"
 # epoch = "500"
 
-xx = "20231017-103124"
-epoch = "10"
+xx = "20231106-205045"
+epoch = "39"
 
-model_exp = f"/Path-Of-Model/20180402-114759/{xx}"
+model_exp = f"/Users/dave/Desktop/facenet-model/{xx}"
 ckpt_file = f"model-{xx}.ckpt-{epoch}"
 meta_file = f"model-{xx}.meta"
 
