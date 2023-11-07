@@ -182,10 +182,9 @@ def main(args):
             learning_rate, args.moving_average_decay, tf.compat.v1.global_variables(), args.log_histograms)
         
         # Create a saver
-        saver = tf.train.Saver(tf.trainable_variables(), max_to_keep=150)
-        # set_A_vars = [v for v in tf.compat.v1.trainable_variables() if v.name.startswith('InceptionResnetV1')]
-        # saver_set_A = tf.compat.v1.train.Saver(set_A_vars, max_to_keep=100)
-        # saver_set_A_and_B = tf.compat.v1.train.Saver(tf.compat.v1.trainable_variables(), max_to_keep=100)
+        set_A_vars = [v for v in tf.compat.v1.trainable_variables() if v.name.startswith('InceptionResnetV1')]
+        saver_set_A = tf.compat.v1.train.Saver(set_A_vars, max_to_keep=150)
+        saver_set_A_and_B = tf.compat.v1.train.Saver(tf.compat.v1.trainable_variables(), max_to_keep=150)
 
         # Build the summary operation based on the TF collection of Summaries.
         summary_op = tf.compat.v1.summary.merge_all()
@@ -205,8 +204,7 @@ def main(args):
 
             if pretrained_model:
                 print('Restoring pretrained model: %s' % pretrained_model)
-                saver.restore(sess, pretrained_model)
-                # saver_set_A.restore(sess, pretrained_model)
+                saver_set_A.restore(sess, pretrained_model)
 
             # Training and validation loop
             print('Running training')
@@ -257,7 +255,7 @@ def main(args):
                 stat['time_validate'][epoch-1] = time.time() - t
 
                 # Save variables and the metagraph if it doesn't exist already
-                save_variables_and_metagraph(sess, saver, summary_writer, model_dir, subdir, epoch)
+                save_variables_and_metagraph(sess, saver_set_A_and_B, summary_writer, model_dir, subdir, epoch)
 
 
                 # Evaluate on LFW
