@@ -581,48 +581,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_2_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_2_Branch_2_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_2_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_2_Branch_2_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_2_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_2_Branch_2_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_2_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_2_Branch_2_Conv2d_0b_1x7",
+        name="Block17_2_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_2_Branch_2_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_2_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_2_Branch_2_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_2_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_2_Branch_2_Conv2d_0c_7x1",
+        name="Block17_2_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_2_Branch_2_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_2_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_2_Branch_2_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_2_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_2_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_2_Conv2d_1x1")(
@@ -644,48 +644,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_3_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_3_Branch_3_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_3_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_3_Branch_3_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_3_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_3_Branch_3_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_3_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_3_Branch_3_Conv2d_0b_1x7",
+        name="Block17_3_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_3_Branch_3_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_3_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_3_Branch_3_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_3_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_3_Branch_3_Conv2d_0c_7x1",
+        name="Block17_3_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_3_Branch_3_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_3_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_3_Branch_3_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_3_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_3_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_3_Conv2d_1x1")(
@@ -707,48 +707,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_4_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_4_Branch_4_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_4_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_4_Branch_4_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_4_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_4_Branch_4_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_4_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_4_Branch_4_Conv2d_0b_1x7",
+        name="Block17_4_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_4_Branch_4_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_4_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_4_Branch_4_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_4_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_4_Branch_4_Conv2d_0c_7x1",
+        name="Block17_4_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_4_Branch_4_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_4_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_4_Branch_4_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_4_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_4_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_4_Conv2d_1x1")(
@@ -770,48 +770,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_5_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_5_Branch_5_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_5_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_5_Branch_5_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_5_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_5_Branch_5_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_5_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_5_Branch_5_Conv2d_0b_1x7",
+        name="Block17_5_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_5_Branch_5_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_5_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_5_Branch_5_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_5_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_5_Branch_5_Conv2d_0c_7x1",
+        name="Block17_5_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_5_Branch_5_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_5_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_5_Branch_5_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_5_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_5_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_5_Conv2d_1x1")(
@@ -833,48 +833,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_6_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_6_Branch_6_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_6_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_6_Branch_6_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_6_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_6_Branch_6_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_6_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_6_Branch_6_Conv2d_0b_1x7",
+        name="Block17_6_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_6_Branch_6_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_6_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_6_Branch_6_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_6_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_6_Branch_6_Conv2d_0c_7x1",
+        name="Block17_6_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_6_Branch_6_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_6_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_6_Branch_6_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_6_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_6_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_6_Conv2d_1x1")(
@@ -896,48 +896,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_7_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_7_Branch_7_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_7_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_7_Branch_7_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_7_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_7_Branch_7_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_7_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_7_Branch_7_Conv2d_0b_1x7",
+        name="Block17_7_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_7_Branch_7_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_7_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_7_Branch_7_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_7_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_7_Branch_7_Conv2d_0c_7x1",
+        name="Block17_7_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_7_Branch_7_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_7_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_7_Branch_7_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_7_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_7_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_7_Conv2d_1x1")(
@@ -959,48 +959,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_8_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_8_Branch_8_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_8_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_8_Branch_8_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_8_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_8_Branch_8_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_8_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_8_Branch_8_Conv2d_0b_1x7",
+        name="Block17_8_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_8_Branch_8_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_8_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_8_Branch_8_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_8_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_8_Branch_8_Conv2d_0c_7x1",
+        name="Block17_8_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_8_Branch_8_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_8_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_8_Branch_8_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_8_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_8_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_8_Conv2d_1x1")(
@@ -1022,48 +1022,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_9_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_9_Branch_9_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_9_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_9_Branch_9_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_9_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_9_Branch_9_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_9_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_9_Branch_9_Conv2d_0b_1x7",
+        name="Block17_9_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_9_Branch_9_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_9_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_9_Branch_9_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_9_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_9_Branch_9_Conv2d_0c_7x1",
+        name="Block17_9_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_9_Branch_9_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_9_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_9_Branch_9_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_9_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_9_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_9_Conv2d_1x1")(
@@ -1085,48 +1085,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block17_10_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        128, 1, strides=1, padding="same", use_bias=False, name="Block17_10_Branch_10_Conv2d_0a_1x1"
+        128, 1, strides=1, padding="same", use_bias=False, name="Block17_10_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_10_Branch_10_Conv2d_0a_1x1_BatchNorm",
+        name="Block17_10_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_10_Branch_10_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_10_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [1, 7],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_10_Branch_10_Conv2d_0b_1x7",
+        name="Block17_10_Branch_1_Conv2d_0b_1x7",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_10_Branch_10_Conv2d_0b_1x7_BatchNorm",
+        name="Block17_10_Branch_1_Conv2d_0b_1x7_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_10_Branch_10_Conv2d_0b_1x7_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_10_Branch_1_Conv2d_0b_1x7_Activation")(branch_1)
     branch_1 = Conv2D(
         128,
         [7, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block17_10_Branch_10_Conv2d_0c_7x1",
+        name="Block17_10_Branch_1_Conv2d_0c_7x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block17_10_Branch_10_Conv2d_0c_7x1_BatchNorm",
+        name="Block17_10_Branch_1_Conv2d_0c_7x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block17_10_Branch_10_Conv2d_0c_7x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block17_10_Branch_1_Conv2d_0c_7x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block17_10_Concatenate")(branches)
     up = Conv2D(896, 1, strides=1, padding="same", use_bias=True, name="Block17_10_Conv2d_1x1")(
@@ -1297,48 +1297,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block8_2_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        192, 1, strides=1, padding="same", use_bias=False, name="Block8_2_Branch_2_Conv2d_0a_1x1"
+        192, 1, strides=1, padding="same", use_bias=False, name="Block8_2_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_2_Branch_2_Conv2d_0a_1x1_BatchNorm",
+        name="Block8_2_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_2_Branch_2_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_2_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [1, 3],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_2_Branch_2_Conv2d_0b_1x3",
+        name="Block8_2_Branch_1_Conv2d_0b_1x3",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_2_Branch_2_Conv2d_0b_1x3_BatchNorm",
+        name="Block8_2_Branch_1_Conv2d_0b_1x3_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_2_Branch_2_Conv2d_0b_1x3_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_2_Branch_1_Conv2d_0b_1x3_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [3, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_2_Branch_2_Conv2d_0c_3x1",
+        name="Block8_2_Branch_1_Conv2d_0c_3x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_2_Branch_2_Conv2d_0c_3x1_BatchNorm",
+        name="Block8_2_Branch_1_Conv2d_0c_3x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_2_Branch_2_Conv2d_0c_3x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_2_Branch_1_Conv2d_0c_3x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block8_2_Concatenate")(branches)
     up = Conv2D(1792, 1, strides=1, padding="same", use_bias=True, name="Block8_2_Conv2d_1x1")(
@@ -1360,48 +1360,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block8_3_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        192, 1, strides=1, padding="same", use_bias=False, name="Block8_3_Branch_3_Conv2d_0a_1x1"
+        192, 1, strides=1, padding="same", use_bias=False, name="Block8_3_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_3_Branch_3_Conv2d_0a_1x1_BatchNorm",
+        name="Block8_3_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_3_Branch_3_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_3_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [1, 3],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_3_Branch_3_Conv2d_0b_1x3",
+        name="Block8_3_Branch_1_Conv2d_0b_1x3",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_3_Branch_3_Conv2d_0b_1x3_BatchNorm",
+        name="Block8_3_Branch_1_Conv2d_0b_1x3_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_3_Branch_3_Conv2d_0b_1x3_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_3_Branch_1_Conv2d_0b_1x3_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [3, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_3_Branch_3_Conv2d_0c_3x1",
+        name="Block8_3_Branch_1_Conv2d_0c_3x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_3_Branch_3_Conv2d_0c_3x1_BatchNorm",
+        name="Block8_3_Branch_1_Conv2d_0c_3x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_3_Branch_3_Conv2d_0c_3x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_3_Branch_1_Conv2d_0c_3x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block8_3_Concatenate")(branches)
     up = Conv2D(1792, 1, strides=1, padding="same", use_bias=True, name="Block8_3_Conv2d_1x1")(
@@ -1423,48 +1423,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block8_4_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        192, 1, strides=1, padding="same", use_bias=False, name="Block8_4_Branch_4_Conv2d_0a_1x1"
+        192, 1, strides=1, padding="same", use_bias=False, name="Block8_4_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_4_Branch_4_Conv2d_0a_1x1_BatchNorm",
+        name="Block8_4_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_4_Branch_4_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_4_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [1, 3],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_4_Branch_4_Conv2d_0b_1x3",
+        name="Block8_4_Branch_1_Conv2d_0b_1x3",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_4_Branch_4_Conv2d_0b_1x3_BatchNorm",
+        name="Block8_4_Branch_1_Conv2d_0b_1x3_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_4_Branch_4_Conv2d_0b_1x3_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_4_Branch_1_Conv2d_0b_1x3_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [3, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_4_Branch_4_Conv2d_0c_3x1",
+        name="Block8_4_Branch_1_Conv2d_0c_3x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_4_Branch_4_Conv2d_0c_3x1_BatchNorm",
+        name="Block8_4_Branch_1_Conv2d_0c_3x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_4_Branch_4_Conv2d_0c_3x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_4_Branch_1_Conv2d_0c_3x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block8_4_Concatenate")(branches)
     up = Conv2D(1792, 1, strides=1, padding="same", use_bias=True, name="Block8_4_Conv2d_1x1")(
@@ -1486,48 +1486,48 @@ def InceptionResNetV2(dimension=128):
     )(branch_0)
     branch_0 = Activation("relu", name="Block8_5_Branch_0_Conv2d_1x1_Activation")(branch_0)
     branch_1 = Conv2D(
-        192, 1, strides=1, padding="same", use_bias=False, name="Block8_5_Branch_5_Conv2d_0a_1x1"
+        192, 1, strides=1, padding="same", use_bias=False, name="Block8_5_Branch_1_Conv2d_0a_1x1"
     )(x)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_5_Branch_5_Conv2d_0a_1x1_BatchNorm",
+        name="Block8_5_Branch_1_Conv2d_0a_1x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_5_Branch_5_Conv2d_0a_1x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_5_Branch_1_Conv2d_0a_1x1_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [1, 3],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_5_Branch_5_Conv2d_0b_1x3",
+        name="Block8_5_Branch_1_Conv2d_0b_1x3",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_5_Branch_5_Conv2d_0b_1x3_BatchNorm",
+        name="Block8_5_Branch_1_Conv2d_0b_1x3_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_5_Branch_5_Conv2d_0b_1x3_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_5_Branch_1_Conv2d_0b_1x3_Activation")(branch_1)
     branch_1 = Conv2D(
         192,
         [3, 1],
         strides=1,
         padding="same",
         use_bias=False,
-        name="Block8_5_Branch_5_Conv2d_0c_3x1",
+        name="Block8_5_Branch_1_Conv2d_0c_3x1",
     )(branch_1)
     branch_1 = BatchNormalization(
         axis=3,
         momentum=0.995,
         epsilon=0.001,
         scale=False,
-        name="Block8_5_Branch_5_Conv2d_0c_3x1_BatchNorm",
+        name="Block8_5_Branch_1_Conv2d_0c_3x1_BatchNorm",
     )(branch_1)
-    branch_1 = Activation("relu", name="Block8_5_Branch_5_Conv2d_0c_3x1_Activation")(branch_1)
+    branch_1 = Activation("relu", name="Block8_5_Branch_1_Conv2d_0c_3x1_Activation")(branch_1)
     branches = [branch_0, branch_1]
     mixed = Concatenate(axis=3, name="Block8_5_Concatenate")(branches)
     up = Conv2D(1792, 1, strides=1, padding="same", use_bias=True, name="Block8_5_Conv2d_1x1")(
