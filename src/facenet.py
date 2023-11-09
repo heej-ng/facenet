@@ -465,7 +465,6 @@ def calculate_accuracy(threshold, dist, actual_issame):
     tpr = 0 if (tp+fn==0) else float(tp) / float(tp+fn)
     fpr = 0 if (fp+tn==0) else float(fp) / float(fp+tn)
     acc = float(tp+tn)/dist.size
-    print(f'>>> dist.size: {dist.size}, tp: {tp}, tn: {tn}, fp: {fp}, fn: {fn}')
     return tpr, fpr, acc
 
 
