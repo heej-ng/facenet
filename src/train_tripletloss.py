@@ -190,7 +190,7 @@ def main(args):
                     args.embedding_size, anchor, positive, negative, triplet_loss)
 
                 # Save variables and the metagraph if it doesn't exist already
-                save_variables_and_metagraph(sess, saver_set_A_and_B, summary_writer, model_dir, subdir, step)
+                save_variables_and_metagraph(sess, saver_set_A_and_B, summary_writer, model_dir, subdir, step, epoch)
 
                 # Evaluate on LFW
                 if args.lfw_dir:
@@ -386,11 +386,11 @@ def evaluate(sess, image_paths, embeddings, labels_batch, image_paths_placeholde
     with open(os.path.join(log_dir,'lfw_result.txt'),'at') as f:
         f.write('%d\t%.5f\t%.5f\n' % (step, np.mean(accuracy), val))
 
-def save_variables_and_metagraph(sess, saver, summary_writer, model_dir, model_name, step):
+def save_variables_and_metagraph(sess, saver, summary_writer, model_dir, model_name, step, epoch):
     # Save the model checkpoint
     print('Saving variables')
     start_time = time.time()
-    checkpoint_path = os.path.join(model_dir, 'model-%s.ckpt' % model_name)
+    checkpoint_path = os.path.join(model_dir, f'model-{model_name}-epo-{epoch}.ckpt')
     saver.save(sess, checkpoint_path, global_step=step, write_meta_graph=False)
     save_time_variables = time.time() - start_time
     print('Variables saved in %.2f seconds' % save_time_variables)
